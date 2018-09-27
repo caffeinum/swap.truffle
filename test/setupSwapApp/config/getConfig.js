@@ -15,6 +15,8 @@ const Ipfs = require('ipfs')
 const IpfsRoom = require('ipfs-pubsub-room')
 
 const common = require('./common')
+
+const setupLocalStorage = require('./setupLocalStorage')
 const { LocalStorage } = require('node-localstorage')
 
 module.exports = (config) => ({ account, contracts: { ETH, TOKEN } }) => {
@@ -28,6 +30,9 @@ module.exports = (config) => ({ account, contracts: { ETH, TOKEN } }) => {
     },
   }
 
+  setupLocalStorage(config.storageDir)
+  const storage = new LocalStorage(config.storageDir)
+
   return {
     network: config.network,
     env: {
@@ -35,7 +40,7 @@ module.exports = (config) => ({ account, contracts: { ETH, TOKEN } }) => {
       bitcoin,
       Ipfs,
       IpfsRoom,
-      storage: new LocalStorage(config.storageDir),
+      storage,
     },
     services: [
       new SwapAuth({
